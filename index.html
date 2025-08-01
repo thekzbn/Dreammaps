@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DreamMaps - Learning Management System</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/auth.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <link rel="stylesheet" href="styles/onboarding.css">
+    <!-- Chart.js for dashboard charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Firebase SDK -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="spinner"></div>
+        <p>Loading DreamMaps...</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="navbar hidden">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>DreamMaps</h2>
+            </div>
+            <div class="nav-menu">
+                <a href="#" onclick="showPage('dashboard')" class="nav-link">Dashboard</a>
+                <a href="#" onclick="showPage('skills')" class="nav-link">Skills</a>
+                <a href="#" onclick="showPage('profile')" class="nav-link">Profile</a>
+                <button onclick="logout()" class="btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Welcome/Landing Page -->
+    <div id="welcome-page" class="page">
+        <div class="hero-section">
+            <div class="hero-content">
+                <h1>Welcome to DreamMaps</h1>
+                <p>Your journey to skill mastery starts here. Track your progress, learn new skills, and achieve your dreams.</p>
+                <div class="hero-buttons">
+                    <button onclick="showAuthModal('login')" class="btn btn-primary">Login</button>
+                    <button onclick="showAuthModal('register')" class="btn btn-secondary">Sign Up</button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="placeholder-image">🎯</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeAuthModal()">&times;</span>
+            
+            <!-- Login Form -->
+            <div id="login-form" class="auth-form">
+                <h2>Login to DreamMaps</h2>
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Login</button>
+                </form>
+                <p class="auth-switch">Don't have an account? <a href="#" onclick="switchAuthMode('register')">Sign up</a></p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" class="auth-form hidden">
+                <h2>Join DreamMaps</h2>
+                <form onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label for="register-name">Full Name</label>
+                        <input type="text" id="register-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm-password">Confirm Password</label>
+                        <input type="password" id="register-confirm-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Sign Up</button>
+                </form>
+                <p class="auth-switch">Already have an account? <a href="#" onclick="switchAuthMode('login')">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onboarding Flow -->
+    <div id="onboarding-page" class="page hidden">
+        <!-- Additional Details Step -->
+        <div id="additional-details" class="onboarding-step">
+            <div class="onboarding-container">
+                <h2>Tell us more about yourself</h2>
+                <p>Help us personalize your learning experience</p>
+                <form onsubmit="handleAdditionalDetails(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <select id="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="dob">Date of Birth</label>
+                            <input type="date" id="dob" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="school">School/Institution</label>
+                            <input type="text" id="school" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="school-level">School Level</label>
+                            <select id="school-level" required>
+                                <option value="">Select Level</option>
+                                <option value="high-school">High School</option>
+                                <option value="college">College</option>
+                                <option value="university">University</option>
+                                <option value="graduate">Graduate</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="department">Department/Field of Study</label>
+                        <input type="text" id="department" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Continue</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Skill Selection Step -->
+        <div id="skill-selection" class="onboarding-step hidden">
+            <div class="onboarding-container">
+                <h2>Select Your Skills</h2>
+                <p>Choose the skills you want to track and improve</p>
+                <div class="skill-categories">
+                    <div class="category-tabs">
+                        <button class="tab-btn active" onclick="showSkillCategory('newbie')">Newbie</button>
+                        <button class="tab-btn" onclick="showSkillCategory('intermediate')">Intermediate</button>
+                        <button class="tab-btn" onclick="showSkillCategory('advanced')">Advanced</button>
+                    </div>
+                    <div class="skills-grid" id="skills-container">
+                        <!-- Skills will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div class="selected-skills">
+                    <h3>Selected Skills: <span id="selected-count">0</span></h3>
+                    <div id="selected-skills-list"></div>
+                </div>
+                <button onclick="completeOnboarding()" class="btn btn-primary">Complete Setup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboard-page" class="page hidden">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h1>Welcome back, <span id="user-name">User</span>!</h1>
+                <p>Track your progress and continue your learning journey</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📚</div>
+                    <div class="stat-info">
+                        <h3 id="total-skills">0</h3>
+                        <p>Total Skills</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <h3 id="newbie-skills">0</h3>
+                        <p>Newbie Level</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-info">
+                        <h3 id="intermediate-skills">0</h3>
+                        <p>Intermediate Level</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-info">
+                        <h3 id="advanced-skills">0</h3>
+                        <p>Advanced Level</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-container">
+                    <h3>Skill Distribution</h3>
+                    <canvas id="skillChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Learning Progress</h3>
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </div>
+
+            <div class="recent-activity">
+                <h3>Recent Activity</h3>
+                <div id="activity-list" class="activity-list">
+                    <!-- Activity items will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills Management Page -->
+    <div id="skills-page" class="page hidden">
+        <div class="skills-container">
+            <div class="skills-header">
+                <h1>My Skills</h1>
+                <button onclick="showAddSkillModal()" class="btn btn-primary">Add New Skill</button>
+            </div>
+            
+            <div class="skills-filter">
+                <button class="filter-btn active" onclick="filterSkills('all')">All</button>
+                <button class="filter-btn" onclick="filterSkills('newbie')">Newbie</button>
+                <button class="filter-btn" onclick="filterSkills('intermediate')">Intermediate</button>
+                <button class="filter-btn" onclick="filterSkills('advanced')">Advanced</button>
+            </div>
+
+            <div id="user-skills-grid" class="skills-grid">
+                <!-- User skills will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Page -->
+    <div id="profile-page" class="page hidden">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <div class="avatar-placeholder">👤</div>
+                </div>
+                <div class="profile-info">
+                    <h1 id="profile-name">User Name</h1>
+                    <p id="profile-email">user@example.com</p>
+                </div>
+            </div>
+            
+            <div class="profile-details">
+                <h3>Personal Information</h3>
+                <form onsubmit="updateProfile(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="profile-gender">Gender</label>
+                            <select id="profile-gender">
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-dob">Date of Birth</label>
+                            <input type="date" id="profile-dob">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="profile-school">School/Institution</label>
+                            <input type="text" id="profile-school">
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-school-level">School Level</label>
+                            <select id="profile-school-level">
+                                <option value="high-school">High School</option>
+                                <option value="college">College</option>
+                                <option value="university">University</option>
+                                <option value="graduate">Graduate</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-department">Department/Field of Study</label>
+                        <input type="text" id="profile-department">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Skill Modal -->
+    <div id="add-skill-modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddSkillModal()">&times;</span>
+            <h2>Add New Skill</h2>
+            <form onsubmit="addNewSkill(event)">
+                <div class="form-group">
+                    <label for="new-skill-name">Skill Name</label>
+                    <input type="text" id="new-skill-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-skill-level">Skill Level</label>
+                    <select id="new-skill-level" required>
+                        <option value="">Select Level</option>
+                        <option value="newbie">Newbie</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="new-skill-video">Learning Video URL (optional)</label>
+                    <input type="url" id="new-skill-video">
+                </div>
+                <button type="submit" class="btn btn-primary">Add Skill</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/onboarding.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/skills.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
