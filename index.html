@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DreamMaps - Learning Management System</title>
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/auth.css">
-    <link rel="stylesheet" href="styles/dashboard.css">
-    <link rel="stylesheet" href="styles/onboarding.css">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/auth.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/onboarding.css">
+    
     <!-- Chart.js for dashboard charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Firebase SDK -->
+    
+    <!-- Firebase SDK v10 -->
     <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
@@ -26,13 +30,18 @@
     <nav id="navbar" class="navbar hidden">
         <div class="nav-container">
             <div class="nav-brand">
-                <h2>DreamMaps</h2>
+                <h2>🎯 DreamMaps</h2>
             </div>
             <div class="nav-menu">
-                <a href="#" onclick="showPage('dashboard')" class="nav-link">Dashboard</a>
-                <a href="#" onclick="showPage('skills')" class="nav-link">Skills</a>
-                <a href="#" onclick="showPage('profile')" class="nav-link">Profile</a>
+                <a href="#" onclick="showPage('dashboard')" class="nav-link" data-page="dashboard">Dashboard</a>
+                <a href="#" onclick="showPage('skills')" class="nav-link" data-page="skills">Skills</a>
+                <a href="#" onclick="showPage('profile')" class="nav-link" data-page="profile">Profile</a>
                 <button onclick="logout()" class="btn btn-outline">Logout</button>
+            </div>
+            <div class="nav-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
     </nav>
@@ -42,75 +51,127 @@
         <div class="hero-section">
             <div class="hero-content">
                 <h1>Welcome to DreamMaps</h1>
-                <p>Your journey to skill mastery starts here. Track your progress, learn new skills, and achieve your dreams.</p>
+                <p class="hero-subtitle">Your journey to skill mastery starts here. Track your progress, learn new skills, and achieve your dreams.</p>
                 <div class="hero-buttons">
                     <button onclick="showAuthModal('login')" class="btn btn-primary">Login</button>
                     <button onclick="showAuthModal('register')" class="btn btn-secondary">Sign Up</button>
                 </div>
+                <div class="hero-features">
+                    <div class="feature">
+                        <div class="feature-icon">📊</div>
+                        <h3>Track Progress</h3>
+                        <p>Monitor your skill development</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Set Goals</h3>
+                        <p>Define and achieve learning objectives</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">🏆</div>
+                        <h3>Level Up</h3>
+                        <p>Progress from newbie to advanced</p>
+                    </div>
+                </div>
             </div>
             <div class="hero-image">
-                <div class="placeholder-image">🎯</div>
+                <div class="hero-graphic">
+                    <div class="floating-card">
+                        <div class="card-icon">📚</div>
+                        <div class="card-text">Learn</div>
+                    </div>
+                    <div class="floating-card">
+                        <div class="card-icon">💡</div>
+                        <div class="card-text">Grow</div>
+                    </div>
+                    <div class="floating-card">
+                        <div class="card-icon">🚀</div>
+                        <div class="card-text">Achieve</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Authentication Modal -->
     <div id="auth-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="closeAuthModal()"></div>
         <div class="modal-content">
-            <span class="close" onclick="closeAuthModal()">&times;</span>
+            <div class="modal-header">
+                <span class="close" onclick="closeAuthModal()">&times;</span>
+            </div>
             
             <!-- Login Form -->
             <div id="login-form" class="auth-form">
-                <h2>Login to DreamMaps</h2>
+                <div class="auth-header">
+                    <h2>Welcome Back!</h2>
+                    <p>Sign in to continue your learning journey</p>
+                </div>
                 <form onsubmit="handleLogin(event)">
                     <div class="form-group">
-                        <label for="login-email">Email</label>
-                        <input type="email" id="login-email" required>
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" required placeholder="Enter your email">
                     </div>
                     <div class="form-group">
                         <label for="login-password">Password</label>
-                        <input type="password" id="login-password" required>
+                        <input type="password" id="login-password" required placeholder="Enter your password">
                     </div>
-                    <button type="submit" class="btn btn-primary btn-full">Login</button>
+                    <button type="submit" class="btn btn-primary btn-full">Sign In</button>
                 </form>
-                <p class="auth-switch">Don't have an account? <a href="#" onclick="switchAuthMode('register')">Sign up</a></p>
+                <div class="auth-divider">
+                    <span>or</span>
+                </div>
+                <p class="auth-switch">Don't have an account? <a href="#" onclick="switchAuthMode('register')">Create one</a></p>
             </div>
 
             <!-- Register Form -->
             <div id="register-form" class="auth-form hidden">
-                <h2>Join DreamMaps</h2>
+                <div class="auth-header">
+                    <h2>Join DreamMaps</h2>
+                    <p>Start your skill development journey today</p>
+                </div>
                 <form onsubmit="handleRegister(event)">
                     <div class="form-group">
                         <label for="register-name">Full Name</label>
-                        <input type="text" id="register-name" required>
+                        <input type="text" id="register-name" required placeholder="Enter your full name">
                     </div>
                     <div class="form-group">
-                        <label for="register-email">Email</label>
-                        <input type="email" id="register-email" required>
+                        <label for="register-email">Email Address</label>
+                        <input type="email" id="register-email" required placeholder="Enter your email">
                     </div>
                     <div class="form-group">
                         <label for="register-password">Password</label>
-                        <input type="password" id="register-password" required>
+                        <input type="password" id="register-password" required placeholder="Create a password">
                     </div>
                     <div class="form-group">
                         <label for="register-confirm-password">Confirm Password</label>
-                        <input type="password" id="register-confirm-password" required>
+                        <input type="password" id="register-confirm-password" required placeholder="Confirm your password">
                     </div>
-                    <button type="submit" class="btn btn-primary btn-full">Sign Up</button>
+                    <button type="submit" class="btn btn-primary btn-full">Create Account</button>
                 </form>
-                <p class="auth-switch">Already have an account? <a href="#" onclick="switchAuthMode('login')">Login</a></p>
+                <div class="auth-divider">
+                    <span>or</span>
+                </div>
+                <p class="auth-switch">Already have an account? <a href="#" onclick="switchAuthMode('login')">Sign in</a></p>
             </div>
         </div>
     </div>
 
     <!-- Onboarding Flow -->
     <div id="onboarding-page" class="page hidden">
-        <!-- Additional Details Step -->
+        <!-- Step 1: Additional Details -->
         <div id="additional-details" class="onboarding-step">
             <div class="onboarding-container">
-                <h2>Tell us more about yourself</h2>
-                <p>Help us personalize your learning experience</p>
-                <form onsubmit="handleAdditionalDetails(event)">
+                <div class="onboarding-header">
+                    <h2>Tell us about yourself</h2>
+                    <p>Help us personalize your learning experience</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 50%"></div>
+                    </div>
+                    <span class="progress-text">Step 1 of 2</span>
+                </div>
+                
+                <form onsubmit="handleAdditionalDetails(event)" class="onboarding-form">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="gender">Gender</label>
@@ -119,6 +180,7 @@
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                                 <option value="other">Other</option>
+                                <option value="prefer-not-to-say">Prefer not to say</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -126,51 +188,81 @@
                             <input type="date" id="dob" required>
                         </div>
                     </div>
+                    
                     <div class="form-row">
                         <div class="form-group">
                             <label for="school">School/Institution</label>
-                            <input type="text" id="school" required>
+                            <input type="text" id="school" required placeholder="Enter your school or institution">
                         </div>
                         <div class="form-group">
-                            <label for="school-level">School Level</label>
+                            <label for="school-level">Education Level</label>
                             <select id="school-level" required>
                                 <option value="">Select Level</option>
                                 <option value="high-school">High School</option>
                                 <option value="college">College</option>
                                 <option value="university">University</option>
-                                <option value="graduate">Graduate</option>
+                                <option value="graduate">Graduate School</option>
+                                <option value="professional">Professional</option>
                             </select>
                         </div>
                     </div>
+                    
                     <div class="form-group">
                         <label for="department">Department/Field of Study</label>
-                        <input type="text" id="department" required>
+                        <input type="text" id="department" required placeholder="e.g., Computer Science, Marketing, etc.">
                     </div>
-                    <button type="submit" class="btn btn-primary">Continue</button>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Continue</button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        <!-- Skill Selection Step -->
+        <!-- Step 2: Skill Selection -->
         <div id="skill-selection" class="onboarding-step hidden">
             <div class="onboarding-container">
-                <h2>Select Your Skills</h2>
-                <p>Choose the skills you want to track and improve</p>
+                <div class="onboarding-header">
+                    <h2>Choose Your Skills</h2>
+                    <p>Select the skills you want to track and improve</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 100%"></div>
+                    </div>
+                    <span class="progress-text">Step 2 of 2</span>
+                </div>
+                
                 <div class="skill-categories">
                     <div class="category-tabs">
-                        <button class="tab-btn active" onclick="showSkillCategory('newbie')">Newbie</button>
-                        <button class="tab-btn" onclick="showSkillCategory('intermediate')">Intermediate</button>
-                        <button class="tab-btn" onclick="showSkillCategory('advanced')">Advanced</button>
+                        <button class="tab-btn active" onclick="showSkillCategory('newbie')" data-category="newbie">
+                            <span class="tab-icon">🌱</span>
+                            Newbie
+                        </button>
+                        <button class="tab-btn" onclick="showSkillCategory('intermediate')" data-category="intermediate">
+                            <span class="tab-icon">⚡</span>
+                            Intermediate
+                        </button>
+                        <button class="tab-btn" onclick="showSkillCategory('advanced')" data-category="advanced">
+                            <span class="tab-icon">🏆</span>
+                            Advanced
+                        </button>
                     </div>
+                    
                     <div class="skills-grid" id="skills-container">
                         <!-- Skills will be populated by JavaScript -->
                     </div>
                 </div>
-                <div class="selected-skills">
+                
+                <div class="selected-skills-summary">
                     <h3>Selected Skills: <span id="selected-count">0</span></h3>
-                    <div id="selected-skills-list"></div>
+                    <div id="selected-skills-list" class="selected-skills-list">
+                        <!-- Selected skills will appear here -->
+                    </div>
                 </div>
-                <button onclick="completeOnboarding()" class="btn btn-primary">Complete Setup</button>
+                
+                <div class="form-actions">
+                    <button onclick="goBackToDetails()" class="btn btn-secondary">Back</button>
+                    <button onclick="completeOnboarding()" class="btn btn-primary" id="complete-btn" disabled>Complete Setup</button>
+                </div>
             </div>
         </div>
     </div>
@@ -179,8 +271,15 @@
     <div id="dashboard-page" class="page hidden">
         <div class="dashboard-container">
             <div class="dashboard-header">
-                <h1>Welcome back, <span id="user-name">User</span>!</h1>
-                <p>Track your progress and continue your learning journey</p>
+                <div class="welcome-section">
+                    <h1>Welcome back, <span id="user-name">User</span>! 👋</h1>
+                    <p>Track your progress and continue your learning journey</p>
+                </div>
+                <div class="dashboard-actions">
+                    <button onclick="showAddSkillModal()" class="btn btn-primary">
+                        <span>+</span> Add Skill
+                    </button>
+                </div>
             </div>
             
             <div class="stats-grid">
@@ -190,12 +289,18 @@
                         <h3 id="total-skills">0</h3>
                         <p>Total Skills</p>
                     </div>
+                    <div class="stat-trend">
+                        <span class="trend-indicator positive">↗</span>
+                    </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">🎯</div>
+                    <div class="stat-icon">🌱</div>
                     <div class="stat-info">
                         <h3 id="newbie-skills">0</h3>
                         <p>Newbie Level</p>
+                    </div>
+                    <div class="stat-trend">
+                        <span class="trend-indicator">→</span>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -204,6 +309,9 @@
                         <h3 id="intermediate-skills">0</h3>
                         <p>Intermediate Level</p>
                     </div>
+                    <div class="stat-trend">
+                        <span class="trend-indicator positive">↗</span>
+                    </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">🏆</div>
@@ -211,24 +319,46 @@
                         <h3 id="advanced-skills">0</h3>
                         <p>Advanced Level</p>
                     </div>
+                    <div class="stat-trend">
+                        <span class="trend-indicator positive">↗</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="charts-section">
-                <div class="chart-container">
-                    <h3>Skill Distribution</h3>
-                    <canvas id="skillChart"></canvas>
+            <div class="dashboard-content">
+                <div class="charts-section">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Skill Distribution</h3>
+                            <div class="chart-actions">
+                                <button class="btn btn-small" onclick="refreshCharts()">Refresh</button>
+                            </div>
+                        </div>
+                        <canvas id="skillChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>Learning Progress</h3>
+                            <div class="chart-actions">
+                                <select id="progress-timeframe" onchange="updateProgressChart()">
+                                    <option value="week">This Week</option>
+                                    <option value="month">This Month</option>
+                                    <option value="year">This Year</option>
+                                </select>
+                            </div>
+                        </div>
+                        <canvas id="progressChart"></canvas>
+                    </div>
                 </div>
-                <div class="chart-container">
-                    <h3>Learning Progress</h3>
-                    <canvas id="progressChart"></canvas>
-                </div>
-            </div>
 
-            <div class="recent-activity">
-                <h3>Recent Activity</h3>
-                <div id="activity-list" class="activity-list">
-                    <!-- Activity items will be populated by JavaScript -->
+                <div class="activity-section">
+                    <div class="section-header">
+                        <h3>Recent Activity</h3>
+                        <a href="#" onclick="showPage('skills')" class="view-all-link">View All Skills →</a>
+                    </div>
+                    <div id="activity-list" class="activity-list">
+                        <!-- Activity items will be populated by JavaScript -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -238,19 +368,38 @@
     <div id="skills-page" class="page hidden">
         <div class="skills-container">
             <div class="skills-header">
-                <h1>My Skills</h1>
-                <button onclick="showAddSkillModal()" class="btn btn-primary">Add New Skill</button>
+                <div class="page-title">
+                    <h1>My Skills</h1>
+                    <p>Manage and track your skill development</p>
+                </div>
+                <div class="skills-actions">
+                    <button onclick="showAddSkillModal()" class="btn btn-primary">Add New Skill</button>
+                </div>
             </div>
             
-            <div class="skills-filter">
-                <button class="filter-btn active" onclick="filterSkills('all')">All</button>
-                <button class="filter-btn" onclick="filterSkills('newbie')">Newbie</button>
-                <button class="filter-btn" onclick="filterSkills('intermediate')">Intermediate</button>
-                <button class="filter-btn" onclick="filterSkills('advanced')">Advanced</button>
+            <div class="skills-controls">
+                <div class="skills-filter">
+                    <button class="filter-btn active" onclick="filterSkills('all')" data-filter="all">All Skills</button>
+                    <button class="filter-btn" onclick="filterSkills('newbie')" data-filter="newbie">🌱 Newbie</button>
+                    <button class="filter-btn" onclick="filterSkills('intermediate')" data-filter="intermediate">⚡ Intermediate</button>
+                    <button class="filter-btn" onclick="filterSkills('advanced')" data-filter="advanced">🏆 Advanced</button>
+                </div>
+                <div class="skills-search">
+                    <input type="text" id="skill-search" placeholder="Search skills..." onkeyup="searchSkills()">
+                </div>
             </div>
 
             <div id="user-skills-grid" class="skills-grid">
                 <!-- User skills will be populated by JavaScript -->
+            </div>
+            
+            <div id="no-skills-message" class="no-skills-message hidden">
+                <div class="empty-state">
+                    <div class="empty-icon">📚</div>
+                    <h3>No skills yet</h3>
+                    <p>Start your learning journey by adding your first skill!</p>
+                    <button onclick="showAddSkillModal()" class="btn btn-primary">Add Your First Skill</button>
+                </div>
             </div>
         </div>
     </div>
@@ -260,92 +409,234 @@
         <div class="profile-container">
             <div class="profile-header">
                 <div class="profile-avatar">
-                    <div class="avatar-placeholder">👤</div>
+                    <div class="avatar-placeholder" id="profile-avatar">👤</div>
+                    <button class="avatar-edit-btn" onclick="changeAvatar()">📷</button>
                 </div>
                 <div class="profile-info">
                     <h1 id="profile-name">User Name</h1>
                     <p id="profile-email">user@example.com</p>
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <span class="stat-value" id="profile-total-skills">0</span>
+                            <span class="stat-label">Skills</span>
+                        </div>
+                        <div class="profile-stat">
+                            <span class="stat-value" id="profile-join-date">Jan 2024</span>
+                            <span class="stat-label">Joined</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="profile-details">
-                <h3>Personal Information</h3>
-                <form onsubmit="updateProfile(event)">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="profile-gender">Gender</label>
-                            <select id="profile-gender">
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="other">Other</option>
-                            </select>
+            <div class="profile-content">
+                <div class="profile-section">
+                    <h3>Personal Information</h3>
+                    <form onsubmit="updateProfile(event)" class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="profile-gender">Gender</label>
+                                <select id="profile-gender">
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer-not-to-say">Prefer not to say</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-dob">Date of Birth</label>
+                                <input type="date" id="profile-dob">
+                            </div>
                         </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="profile-school">School/Institution</label>
+                                <input type="text" id="profile-school" placeholder="Enter your school or institution">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-school-level">Education Level</label>
+                                <select id="profile-school-level">
+                                    <option value="high-school">High School</option>
+                                    <option value="college">College</option>
+                                    <option value="university">University</option>
+                                    <option value="graduate">Graduate School</option>
+                                    <option value="professional">Professional</option>
+                                </select>
+                            </div>
+                        </div>
+                        
                         <div class="form-group">
-                            <label for="profile-dob">Date of Birth</label>
-                            <input type="date" id="profile-dob">
+                            <label for="profile-department">Department/Field of Study</label>
+                            <input type="text" id="profile-department" placeholder="e.g., Computer Science, Marketing, etc.">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                            <button type="button" onclick="resetProfileForm()" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="profile-section">
+                    <h3>Account Settings</h3>
+                    <div class="settings-options">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Email Notifications</h4>
+                                <p>Receive updates about your progress</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="email-notifications" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <h4>Dark Mode</h4>
+                                <p>Switch to dark theme</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="dark-mode" onchange="toggleDarkMode()">
+                                <span class="slider"></span>
+                            </label>
                         </div>
                     </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="profile-school">School/Institution</label>
-                            <input type="text" id="profile-school">
-                        </div>
-                        <div class="form-group">
-                            <label for="profile-school-level">School Level</label>
-                            <select id="profile-school-level">
-                                <option value="high-school">High School</option>
-                                <option value="college">College</option>
-                                <option value="university">University</option>
-                                <option value="graduate">Graduate</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="profile-department">Department/Field of Study</label>
-                        <input type="text" id="profile-department">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Update Profile</button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Add Skill Modal -->
     <div id="add-skill-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="closeAddSkillModal()"></div>
         <div class="modal-content">
-            <span class="close" onclick="closeAddSkillModal()">&times;</span>
-            <h2>Add New Skill</h2>
-            <form onsubmit="addNewSkill(event)">
+            <div class="modal-header">
+                <h2>Add New Skill</h2>
+                <span class="close" onclick="closeAddSkillModal()">&times;</span>
+            </div>
+            
+            <form onsubmit="addNewSkill(event)" class="modal-form">
                 <div class="form-group">
                     <label for="new-skill-name">Skill Name</label>
-                    <input type="text" id="new-skill-name" required>
+                    <input type="text" id="new-skill-name" required placeholder="e.g., JavaScript, Photography, etc.">
                 </div>
+                
                 <div class="form-group">
-                    <label for="new-skill-level">Skill Level</label>
+                    <label for="new-skill-level">Current Level</label>
                     <select id="new-skill-level" required>
-                        <option value="">Select Level</option>
-                        <option value="newbie">Newbie</option>
-                        <option value="intermediate">Intermediate</option>
-                        <option value="advanced">Advanced</option>
+                        <option value="">Select your current level</option>
+                        <option value="newbie">🌱 Newbie - Just starting out</option>
+                        <option value="intermediate">⚡ Intermediate - Some experience</option>
+                        <option value="advanced">🏆 Advanced - Highly skilled</option>
                     </select>
                 </div>
+                
                 <div class="form-group">
-                    <label for="new-skill-video">Learning Video URL (optional)</label>
-                    <input type="url" id="new-skill-video">
+                    <label for="new-skill-category">Category</label>
+                    <select id="new-skill-category">
+                        <option value="">Select category (optional)</option>
+                        <option value="Programming">Programming</option>
+                        <option value="Design">Design</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Business">Business</option>
+                        <option value="Language">Language</option>
+                        <option value="Creative">Creative</option>
+                        <option value="Technical">Technical</option>
+                        <option value="Other">Other</option>
+                    </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Add Skill</button>
+                
+                <div class="form-group">
+                    <label for="new-skill-video">Learning Resource URL (optional)</label>
+                    <input type="url" id="new-skill-video" placeholder="https://example.com/learning-resource">
+                    <small>Add a link to a tutorial, course, or learning resource</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-skill-notes">Notes (optional)</label>
+                    <textarea id="new-skill-notes" placeholder="Add any notes about this skill..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" onclick="closeAddSkillModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Skill</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <!-- Skill Detail Modal -->
+    <div id="skill-detail-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="closeSkillDetailModal()"></div>
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2 id="skill-detail-name">Skill Name</h2>
+                <span class="close" onclick="closeSkillDetailModal()">&times;</span>
+            </div>
+            
+            <div class="skill-detail-content">
+                <div class="skill-detail-header">
+                    <div class="skill-badge" id="skill-detail-level">Newbie</div>
+                    <div class="skill-actions">
+                        <button onclick="editSkill()" class="btn btn-secondary btn-small">Edit</button>
+                        <button onclick="deleteSkill()" class="btn btn-danger btn-small">Delete</button>
+                    </div>
+                </div>
+                
+                <div class="skill-detail-info">
+                    <div class="info-item">
+                        <span class="info-label">Category:</span>
+                        <span id="skill-detail-category">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Added:</span>
+                        <span id="skill-detail-date">-</span>
+                    </div>
+                    <div class="info-item" id="skill-resource-item" style="display: none;">
+                        <span class="info-label">Resource:</span>
+                        <a id="skill-detail-resource" href="#" target="_blank">View Resource</a>
+                    </div>
+                </div>
+                
+                <div class="skill-notes" id="skill-notes-section" style="display: none;">
+                    <h4>Notes</h4>
+                    <p id="skill-detail-notes"></p>
+                </div>
+                
+                <div class="level-progression">
+                    <h4>Level Progression</h4>
+                    <div class="progression-buttons">
+                        <button onclick="updateSkillLevel('newbie')" class="level-btn" data-level="newbie">
+                            🌱 Newbie
+                        </button>
+                        <button onclick="updateSkillLevel('intermediate')" class="level-btn" data-level="intermediate">
+                            ⚡ Intermediate
+                        </button>
+                        <button onclick="updateSkillLevel('advanced')" class="level-btn" data-level="advanced">
+                            🏆 Advanced
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="notification hidden">
+        <div class="notification-content">
+            <span id="notification-message"></span>
+            <button onclick="hideNotification()" class="notification-close">&times;</button>
+        </div>
+    </div>
+
     <!-- JavaScript Files -->
-    <script src="js/firebase-config.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/database.js"></script>
-    <script src="js/onboarding.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script src="js/skills.js"></script>
-    <script src="js/profile.js"></script>
-    <script src="js/main.js"></script>
+    <script type="module" src="assets/js/firebase-config.js"></script>
+    <script type="module" src="assets/js/auth.js"></script>
+    <script type="module" src="assets/js/database.js"></script>
+    <script type="module" src="assets/js/onboarding.js"></script>
+    <script type="module" src="assets/js/dashboard.js"></script>
+    <script type="module" src="assets/js/skills.js"></script>
+    <script type="module" src="assets/js/profile.js"></script>
+    <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>
