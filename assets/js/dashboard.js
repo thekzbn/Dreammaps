@@ -1,8 +1,15 @@
 // Dashboard module
 import { getCurrentUser } from './auth.js';
-import { getUserStats, getUserActivities } from './database.js';
+import { 
+    collection, 
+    query, 
+    where, 
+    getDocs,
+    orderBy,
+    limit
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { db, isDevelopment } from './firebase-config.js';
 import { showNotification, formatDate, getTimeAgo } from './main.js';
-import { isDevelopment } from './firebase-config.js';
 
 // Dashboard state
 let skillChart = null;
@@ -18,97 +25,123 @@ export async function loadDashboardData() {
             console.log('📊 Loading dashboard data...');
         }
         
-        // Load user stats
-        const stats = await getUserStats(user.uid);
-        updateStatsDisplay(stats);
+        // Load user enrolled courses stats
+        const enrolledCourses = await getUserEnrolledCourses(user.uid);
+        updateDashboardStats(enrolledCourses);
         
-        // Load recent activities
-        const activities = await getUserActivities(user.uid, 5);
-        updateActivitiesDisplay(activities);
+        // Load recent activities (simplified)
+        updateRecentActivity(enrolledCourses);
         
         // Initialize charts
-        initializeCharts(stats);
+        initializeSimpleCharts(enrolledCourses);
         
     } catch (error) {
         console.error('Error loading dashboard data:', error);
-        showNotification('Error loading dashboard data.', 'error');
+        // Show simplified dashboard instead of error
+        updateDashboardStats([]);
+        updateRecentActivity([]);
+        initializeSimpleCharts([]);
     }
 }
 
-// Update stats display
-function updateStatsDisplay(stats) {
-    document.getElementById('total-skills').textContent = stats.totalSkills;
-    document.getElementById('newbie-skills').textContent = stats.newbieSkills;
-    document.getElementById('intermediate-skills').textContent = stats.intermediateSkills;
-    document.getElementById('advanced-skills').textContent = stats.advancedSkills;
+// Get user enrolled courses
+async function getUserEnrolledCourses(userId) {
+    try {
+        const enrollmentsQuery = query(
+            collection(db, 'enrollments'),
+            where('userId', '==', userId)
+        );
+        
+        const enrollmentsSnapshot = await getDocs(enrollmentsQuery);
+        const courseIds = [];
+        
+        enrollmentsSnapshot.forEach((doc) => {
+            courseIds.push(doc.data().courseId);
+        });
+        
+        if (courseIds.length === 0) return [];
+        
+        // Get course details
+        const coursesQuery = query(collection(db, 'courses'));
+        const coursesSnapshot = await getDocs(coursesQuery);
+        const enrolledCourses = [];
+        
+        coursesSnapshot.forEach((doc) => {
+            if (courseIds.includes(doc.id)) {
+                enrolledCourses.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            }
+        });
+        
+        return enrolledCourses;
+        
+    } catch (error) {
+        console.error('Error getting enrolled courses:', error);
+        return [];
+    }
 }
 
-// Update activities display
-function updateActivitiesDisplay(activities) {
+// Update dashboard stats
+function updateDashboardStats(enrolledCourses) {
+    const totalCourses = enrolledCourses.length;
+    const beginnerCourses = enrolledCourses.filter(c => c.level === 'beginner').length;
+    const intermediateCourses = enrolledCourses.filter(c => c.level === 'intermediate').length;
+    const advancedCourses = enrolledCourses.filter(c => c.level === 'advanced').length;
+    
+    document.getElementById('total-courses').textContent = totalCourses;
+    document.getElementById('beginner-courses').textContent = beginnerCourses;
+    document.getElementById('intermediate-courses').textContent = intermediateCourses;
+    document.getElementById('advanced-courses').textContent = advancedCourses;
+}
+
+// Update recent activity
+function updateRecentActivity(enrolledCourses) {
     const activityList = document.getElementById('activity-list');
     if (!activityList) return;
     
-    if (activities.length === 0) {
+    if (enrolledCourses.length === 0) {
         activityList.innerHTML = `
             <div class="empty-activity">
-                <div class="empty-activity-icon">📝</div>
-                <h4>No recent activity</h4>
-                <p>Start adding skills to see your progress here!</p>
+                <div class="empty-activity-icon">📚</div>
+                <h4>No enrolled courses</h4>
+                <p>Browse our course catalog to get started!</p>
+                <button onclick="showPage('courses')" class="btn btn-primary">View Courses</button>
             </div>
         `;
         return;
     }
     
-    activityList.innerHTML = activities.map(activity => {
-        const icon = getActivityIcon(activity.type);
-        const message = getActivityMessage(activity);
-        const timeAgo = getTimeAgo(activity.timestamp);
-        
+    // Show recent enrolled courses
+    activityList.innerHTML = enrolledCourses.slice(0, 5).map(course => {
         return `
             <div class="activity-item">
-                <div class="activity-icon">${icon}</div>
+                <div class="activity-icon">📚</div>
                 <div class="activity-content">
-                    <h4>${message}</h4>
-                    <p>${activity.data.skillName || ''}</p>
+                    <h4>Enrolled in course</h4>
+                    <p>${course.title}</p>
                 </div>
-                <div class="activity-time">${timeAgo}</div>
+                <div class="activity-time">Recently</div>
             </div>
         `;
     }).join('');
 }
 
-// Get activity icon
-function getActivityIcon(type) {
-    const icons = {
-        skill_added: '➕',
-        skill_removed: '➖',
-        skill_updated: '📝',
-        onboarding_completed: '🎉',
-        profile_updated: '👤'
-    };
-    return icons[type] || '📝';
+// Simple refresh function
+export function refreshDashboard() {
+    loadDashboardData();
+    showNotification('Dashboard refreshed!', 'success', 2000);
 }
 
-// Get activity message
-function getActivityMessage(activity) {
-    const messages = {
-        skill_added: 'Added new skill',
-        skill_removed: 'Removed skill',
-        skill_updated: 'Updated skill',
-        onboarding_completed: 'Completed onboarding',
-        profile_updated: 'Updated profile'
-    };
-    return messages[activity.type] || 'Activity';
+// Initialize simple charts
+function initializeSimpleCharts(enrolledCourses) {
+    initializeCourseChart(enrolledCourses);
+    initializeProgressChart(enrolledCourses);
 }
 
-// Initialize charts
-function initializeCharts(stats) {
-    initializeSkillChart(stats);
-    initializeProgressChart(stats);
-}
-
-// Initialize skill distribution chart
-function initializeSkillChart(stats) {
+// Initialize course distribution chart
+function initializeCourseChart(enrolledCourses) {
     const ctx = document.getElementById('skillChart');
     if (!ctx) return;
     
@@ -116,12 +149,16 @@ function initializeSkillChart(stats) {
         skillChart.destroy();
     }
     
+    const beginnerCount = enrolledCourses.filter(c => c.level === 'beginner').length;
+    const intermediateCount = enrolledCourses.filter(c => c.level === 'intermediate').length;
+    const advancedCount = enrolledCourses.filter(c => c.level === 'advanced').length;
+    
     skillChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['Newbie', 'Intermediate', 'Advanced'],
+            labels: ['Beginner', 'Intermediate', 'Advanced'],
             datasets: [{
-                data: [stats.newbieSkills, stats.intermediateSkills, stats.advancedSkills],
+                data: [beginnerCount, intermediateCount, advancedCount],
                 backgroundColor: ['#48bb78', '#ed8936', '#f56565'],
                 borderWidth: 0
             }]
@@ -139,7 +176,7 @@ function initializeSkillChart(stats) {
 }
 
 // Initialize progress chart
-function initializeProgressChart(stats) {
+function initializeProgressChart(enrolledCourses) {
     const ctx = document.getElementById('progressChart');
     if (!ctx) return;
     
@@ -147,21 +184,16 @@ function initializeProgressChart(stats) {
         progressChart.destroy();
     }
     
-    // Mock data for progress chart
-    const data = [
-        stats.newbieSkills * 0.3,
-        stats.newbieSkills * 0.5,
-        stats.newbieSkills * 0.7,
-        stats.totalSkills * 0.8,
-        stats.totalSkills
-    ];
+    // Simple progress data
+    const totalCourses = enrolledCourses.length;
+    const data = [0, totalCourses * 0.2, totalCourses * 0.4, totalCourses * 0.6, totalCourses];
     
     progressChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
             datasets: [{
-                label: 'Skills Progress',
+                label: 'Course Progress',
                 data: data,
                 borderColor: '#667eea',
                 backgroundColor: 'rgba(102, 126, 234, 0.1)',
@@ -188,8 +220,7 @@ function initializeProgressChart(stats) {
 
 // Refresh charts
 export function refreshCharts() {
-    loadDashboardData();
-    showNotification('Charts refreshed!', 'success', 2000);
+    refreshDashboard();
 }
 
 // Update progress chart timeframe

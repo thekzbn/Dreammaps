@@ -103,7 +103,8 @@ export async function addNewSkill(event) {
         skillName: document.getElementById('new-skill-name').value,
         level: document.getElementById('new-skill-level').value,
         category: document.getElementById('new-skill-category').value,
-        resourceUrl: document.getElementById('new-skill-video').value,
+        videoUrl: document.getElementById('new-skill-video').value,
+        courseContent: document.getElementById('new-skill-content').value,
         notes: document.getElementById('new-skill-notes').value
     };
     
@@ -127,8 +128,38 @@ export function showSkillDetail(skillId) {
     
     // Populate modal
     document.getElementById('skill-detail-name').textContent = skill.skillName;
-    document.getElementById('skill-detail-level').textContent = skill.level;
+    const levelBadge = document.getElementById('skill-detail-level');
+    levelBadge.textContent = skill.level;
+    levelBadge.className = `skill-badge ${skill.level}`;
     document.getElementById('skill-detail-category').textContent = skill.category || 'Other';
+    document.getElementById('skill-detail-progress').textContent = `${skill.progress || 0}%`;
+    
+    // Show/hide video section
+    const videoSection = document.getElementById('skill-video-section');
+    if (skill.videoUrl) {
+        videoSection.style.display = 'block';
+        displayVideo(skill.videoUrl);
+    } else {
+        videoSection.style.display = 'none';
+    }
+    
+    // Show/hide course content section
+    const contentSection = document.getElementById('skill-content-section');
+    if (skill.courseContent) {
+        contentSection.style.display = 'block';
+        document.getElementById('skill-detail-content').innerHTML = formatCourseContent(skill.courseContent);
+    } else {
+        contentSection.style.display = 'none';
+    }
+    
+    // Show/hide notes section
+    const notesSection = document.getElementById('skill-notes-section');
+    if (skill.notes) {
+        notesSection.style.display = 'block';
+        document.getElementById('skill-detail-notes').textContent = skill.notes;
+    } else {
+        notesSection.style.display = 'none';
+    }
     
     // Show modal
     const modal = document.getElementById('skill-detail-modal');
@@ -191,6 +222,93 @@ function updateNoSkillsMessage() {
     }
 }
 
+// Display video in skill modal
+function displayVideo(videoUrl) {
+    const container = document.getElementById('skill-video-container');
+    
+    if (isYouTubeURL(videoUrl)) {
+        const videoId = extractYouTubeID(videoUrl);
+        container.innerHTML = `
+            <iframe class="video-player" 
+                    src="https://www.youtube.com/embed/${videoId}" 
+                    frameborder="0" 
+                    allowfullscreen>
+            </iframe>
+        `;
+    } else if (isVideoURL(videoUrl)) {
+        container.innerHTML = `
+            <video class="video-player" controls>
+                <source src="${videoUrl}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        `;
+    } else {
+        container.innerHTML = `
+            <div class="video-placeholder">
+                <div class="video-placeholder-icon">📹</div>
+                <h5>Invalid Video URL</h5>
+                <p>Please provide a valid YouTube or video file URL</p>
+            </div>
+        `;
+    }
+}
+
+// Check if URL is YouTube
+function isYouTubeURL(url) {
+    return url.includes('youtube.com/watch') || url.includes('youtu.be/');
+}
+
+// Extract YouTube video ID
+function extractYouTubeID(url) {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+}
+
+// Check if URL is a video file
+function isVideoURL(url) {
+    return /\.(mp4|webm|ogg|avi|mov)$/i.test(url);
+}
+
+// Format course content with basic markdown-like formatting
+function formatCourseContent(content) {
+    if (!content) return '';
+    
+    let formatted = content
+        // Headers
+        .replace(/^### (.*$)/gim, '<h6>$1</h6>')
+        .replace(/^## (.*$)/gim, '<h5>$1</h5>')
+        .replace(/^# (.*$)/gim, '<h5>$1</h5>')
+        // Bold
+        .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+        // Italic
+        .replace(/\*(.*)\*/gim, '<em>$1</em>')
+        // Code blocks
+        .replace(/```([^`]+)```/gim, '<pre><code>$1</code></pre>')
+        // Inline code
+        .replace(/`([^`]+)`/gim, '<code>$1</code>')
+        // Lists
+        .replace(/^\* (.+$)/gim, '<li>$1</li>')
+        .replace(/^- (.+$)/gim, '<li>$1</li>')
+        // Highlights
+        .replace(/==(.*)==/gim, '<span class="highlight">$1</span>')
+        // Line breaks
+        .replace(/\n/g, '<br>');
+    
+    // Wrap consecutive list items in ul tags
+    formatted = formatted.replace(/(<li>.*<\/li>(?:<br>)*)+/gim, function(match) {
+        return '<ul>' + match.replace(/<br>/g, '') + '</ul>';
+    });
+    
+    return formatted;
+}
+
+// Start learning function
+export function startLearning() {
+    showNotification('Learning mode activated! 📚', 'info');
+    // Additional learning functionality can be added here
+}
+
 // Make functions globally available
 window.filterSkills = filterSkills;
 window.searchSkills = searchSkills;
@@ -201,3 +319,4 @@ window.showSkillDetail = showSkillDetail;
 window.closeSkillDetailModal = closeSkillDetailModal;
 window.updateSkillLevel = updateSkillLevel;
 window.deleteSkill = deleteSkill;
+window.startLearning = startLearning;

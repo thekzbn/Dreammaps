@@ -99,9 +99,9 @@ async function loadPageData(pageId) {
                 const { loadDashboardData } = await import('./dashboard.js');
                 await loadDashboardData();
                 break;
-            case 'skills':
-                const { loadSkillsData } = await import('./skills.js');
-                await loadSkillsData();
+            case 'courses':
+                const { loadCoursesData } = await import('./courses.js');
+                await loadCoursesData();
                 break;
             case 'profile':
                 const { loadProfileData } = await import('./profile.js');
@@ -123,7 +123,7 @@ function updatePageTitle(pageId) {
     const titles = {
         welcome: 'DreamMaps - Learning Management System',
         dashboard: 'Dashboard - DreamMaps',
-        skills: 'My Skills - DreamMaps',
+        courses: 'Available Courses - DreamMaps',
         profile: 'Profile - DreamMaps',
         onboarding: 'Getting Started - DreamMaps'
     };

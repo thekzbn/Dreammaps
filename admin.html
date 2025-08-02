@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - DreamMaps</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/auth.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+    
+    <!-- Firebase SDK v10 -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="spinner"></div>
+        <p>Loading Admin Panel...</p>
+    </div>
+
+    <!-- Admin Login Page -->
+    <div id="admin-login-page" class="page">
+        <div class="admin-login-container">
+            <div class="admin-header">
+                <div class="admin-logo">
+                    <h1>🎯 DreamMaps</h1>
+                    <p>Admin Panel</p>
+                </div>
+            </div>
+            
+            <div class="admin-login-form">
+                <h2>Administrator Access</h2>
+                <p>Enter your administrator credentials to manage courses and content.</p>
+                
+                <form onsubmit="handleAdminLogin(event)" id="admin-login-form">
+                    <div class="form-group">
+                        <label for="admin-email">Admin Email</label>
+                        <input type="email" id="admin-email" required placeholder="Enter admin email" value="thekzbn.work@gmail.com" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-password">Password</label>
+                        <input type="password" id="admin-password" required placeholder="Enter admin password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Access Admin Panel</button>
+                </form>
+                
+                <div class="admin-footer">
+                    <a href="index.html" class="back-link">← Back to Main App</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="page hidden">
+        <nav class="admin-navbar">
+            <div class="admin-nav-container">
+                <div class="admin-nav-brand">
+                    <h2>🎯 DreamMaps Admin</h2>
+                </div>
+                <div class="admin-nav-menu">
+                    <a href="#" onclick="showAdminPage('courses')" class="admin-nav-link active" data-page="courses">Courses</a>
+                    <a href="#" onclick="showAdminPage('users')" class="admin-nav-link" data-page="users">Users</a>
+                    <a href="#" onclick="showAdminPage('analytics')" class="admin-nav-link" data-page="analytics">Analytics</a>
+                    <button onclick="adminLogout()" class="btn btn-outline">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Course Management -->
+        <div id="admin-courses-page" class="admin-content-page">
+            <div class="admin-content-container">
+                <div class="admin-page-header">
+                    <h1>Course Management</h1>
+                    <button onclick="showAddCourseModal()" class="btn btn-primary">Add New Course</button>
+                </div>
+                
+                <div class="courses-grid" id="admin-courses-grid">
+                    <!-- Courses will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- User Management -->
+        <div id="admin-users-page" class="admin-content-page hidden">
+            <div class="admin-content-container">
+                <div class="admin-page-header">
+                    <h1>User Management</h1>
+                    <div class="admin-stats">
+                        <div class="stat-card">
+                            <h3 id="total-users">0</h3>
+                            <p>Total Users</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="active-users">0</h3>
+                            <p>Active This Month</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="users-table" id="admin-users-table">
+                    <!-- Users will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics -->
+        <div id="admin-analytics-page" class="admin-content-page hidden">
+            <div class="admin-content-container">
+                <div class="admin-page-header">
+                    <h1>Analytics Dashboard</h1>
+                </div>
+                
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>Course Completion Rates</h3>
+                        <canvas id="completion-chart"></canvas>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Popular Courses</h3>
+                        <canvas id="popularity-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Course Modal -->
+    <div id="add-course-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="closeAddCourseModal()"></div>
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2>Add New Course</h2>
+                <span class="close" onclick="closeAddCourseModal()">&times;</span>
+            </div>
+            
+            <form onsubmit="addNewCourse(event)" class="modal-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="course-title">Course Title</label>
+                        <input type="text" id="course-title" required placeholder="e.g., HTML Fundamentals">
+                    </div>
+                    <div class="form-group">
+                        <label for="course-category">Category</label>
+                        <select id="course-category" required>
+                            <option value="">Select Category</option>
+                            <option value="web-development">Web Development</option>
+                            <option value="microsoft-office">Microsoft Office</option>
+                            <option value="design">UI/UX Design</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="course-level">Difficulty Level</label>
+                        <select id="course-level" required>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="course-duration">Duration (hours)</label>
+                        <input type="number" id="course-duration" required placeholder="e.g., 8">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="course-description">Course Description</label>
+                    <textarea id="course-description" required placeholder="Brief description of the course..." rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="course-video-url">YouTube Video URL</label>
+                    <input type="url" id="course-video-url" placeholder="https://youtube.com/watch?v=...">
+                    <small>Leave empty if no video yet</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="course-content">Course Content</label>
+                    <textarea id="course-content" placeholder="Write the complete course content using markdown..." rows="10"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" onclick="closeAddCourseModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Course</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="notification hidden">
+        <div class="notification-content">
+            <span id="notification-message"></span>
+            <button onclick="hideNotification()" class="notification-close">&times;</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script type="module" src="assets/js/firebase-config.js"></script>
+    <script type="module" src="assets/js/auth.js"></script>
+    <script type="module" src="assets/js/database.js"></script>
+    <script type="module" src="assets/js/admin.js"></script>
+    <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
