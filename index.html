@@ -36,7 +36,7 @@
             </div>
             <div class="nav-menu">
                 <a href="#" onclick="showPage('dashboard')" class="nav-link" data-page="dashboard">Dashboard</a>
-                <a href="#" onclick="showPage('skills')" class="nav-link" data-page="skills">Skills</a>
+                <a href="#" onclick="showPage('courses')" class="nav-link" data-page="courses">Courses</a>
                 <a href="#" onclick="showPage('profile')" class="nav-link" data-page="profile">Profile</a>
                 <button onclick="logout()" class="btn btn-outline">Logout</button>
             </div>
@@ -288,8 +288,8 @@
                 <div class="stat-card">
                     <div class="stat-icon">📚</div>
                     <div class="stat-info">
-                        <h3 id="total-skills">0</h3>
-                        <p>Total Skills</p>
+                        <h3 id="total-courses">0</h3>
+                        <p>Enrolled Courses</p>
                     </div>
                     <div class="stat-trend">
                         <span class="trend-indicator positive">↗</span>
@@ -298,8 +298,8 @@
                 <div class="stat-card">
                     <div class="stat-icon">🌱</div>
                     <div class="stat-info">
-                        <h3 id="newbie-skills">0</h3>
-                        <p>Newbie Level</p>
+                        <h3 id="beginner-courses">0</h3>
+                        <p>Beginner Level</p>
                     </div>
                     <div class="stat-trend">
                         <span class="trend-indicator">→</span>
@@ -308,7 +308,7 @@
                 <div class="stat-card">
                     <div class="stat-icon">⚡</div>
                     <div class="stat-info">
-                        <h3 id="intermediate-skills">0</h3>
+                        <h3 id="intermediate-courses">0</h3>
                         <p>Intermediate Level</p>
                     </div>
                     <div class="stat-trend">
@@ -318,7 +318,7 @@
                 <div class="stat-card">
                     <div class="stat-icon">🏆</div>
                     <div class="stat-info">
-                        <h3 id="advanced-skills">0</h3>
+                        <h3 id="advanced-courses">0</h3>
                         <p>Advanced Level</p>
                     </div>
                     <div class="stat-trend">
@@ -354,10 +354,10 @@
                 </div>
 
                 <div class="activity-section">
-                    <div class="section-header">
-                        <h3>Recent Activity</h3>
-                        <a href="#" onclick="showPage('skills')" class="view-all-link">View All Skills →</a>
-                    </div>
+                                    <div class="section-header">
+                    <h3>Recent Activity</h3>
+                    <a href="#" onclick="showPage('courses')" class="view-all-link">View All Courses →</a>
+                </div>
                     <div id="activity-list" class="activity-list">
                         <!-- Activity items will be populated by JavaScript -->
                     </div>
@@ -366,41 +366,45 @@
         </div>
     </div>
 
-    <!-- Skills Management Page -->
-    <div id="skills-page" class="page hidden">
-        <div class="skills-container">
-            <div class="skills-header">
+    <!-- Courses Page -->
+    <div id="courses-page" class="page hidden">
+        <div class="courses-container">
+            <div class="courses-header">
                 <div class="page-title">
-                    <h1>My Skills</h1>
-                    <p>Manage and track your skill development</p>
+                    <h1>Available Courses</h1>
+                    <p>Explore and enroll in our comprehensive learning courses</p>
                 </div>
-                <div class="skills-actions">
-                    <button onclick="showAddSkillModal()" class="btn btn-primary">Add New Skill</button>
+                <div class="courses-filter">
+                    <select id="category-filter" onchange="filterCoursesByCategory()">
+                        <option value="all">All Categories</option>
+                        <option value="web-development">Web Development</option>
+                        <option value="microsoft-office">Microsoft Office</option>
+                        <option value="design">UI/UX Design</option>
+                    </select>
                 </div>
             </div>
             
-            <div class="skills-controls">
-                <div class="skills-filter">
-                    <button class="filter-btn active" onclick="filterSkills('all')" data-filter="all">All Skills</button>
-                    <button class="filter-btn" onclick="filterSkills('newbie')" data-filter="newbie">🌱 Newbie</button>
-                    <button class="filter-btn" onclick="filterSkills('intermediate')" data-filter="intermediate">⚡ Intermediate</button>
-                    <button class="filter-btn" onclick="filterSkills('advanced')" data-filter="advanced">🏆 Advanced</button>
+            <div class="courses-controls">
+                <div class="level-filter">
+                    <button class="filter-btn active" onclick="filterCourses('all')" data-filter="all">All Levels</button>
+                    <button class="filter-btn" onclick="filterCourses('beginner')" data-filter="beginner">🌱 Beginner</button>
+                    <button class="filter-btn" onclick="filterCourses('intermediate')" data-filter="intermediate">⚡ Intermediate</button>
+                    <button class="filter-btn" onclick="filterCourses('advanced')" data-filter="advanced">🏆 Advanced</button>
                 </div>
-                <div class="skills-search">
-                    <input type="text" id="skill-search" placeholder="Search skills..." onkeyup="searchSkills()">
+                <div class="courses-search">
+                    <input type="text" id="course-search" placeholder="Search courses..." onkeyup="searchCourses()">
                 </div>
             </div>
 
-            <div id="user-skills-grid" class="skills-grid">
-                <!-- User skills will be populated by JavaScript -->
+            <div id="available-courses-grid" class="courses-grid">
+                <!-- Available courses will be populated by JavaScript -->
             </div>
             
-            <div id="no-skills-message" class="no-skills-message hidden">
+            <div id="no-courses-message" class="no-courses-message hidden">
                 <div class="empty-state">
                     <div class="empty-icon">📚</div>
-                    <h3>No skills yet</h3>
-                    <p>Start your learning journey by adding your first skill!</p>
-                    <button onclick="showAddSkillModal()" class="btn btn-primary">Add Your First Skill</button>
+                    <h3>No courses available</h3>
+                    <p>Courses will be available soon!</p>
                 </div>
             </div>
         </div>
@@ -692,6 +696,7 @@
     <script type="module" src="assets/js/onboarding.js"></script>
     <script type="module" src="assets/js/dashboard.js"></script>
     <script type="module" src="assets/js/skills.js"></script>
+    <script type="module" src="assets/js/courses.js"></script>
     <script type="module" src="assets/js/profile.js"></script>
     <script type="module" src="assets/js/main.js"></script>
 </body>
