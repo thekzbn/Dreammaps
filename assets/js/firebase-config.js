@@ -5,14 +5,14 @@ import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase
 
 // Your Firebase configuration
 // Replace these values with your actual Firebase project configuration
-const firebaseConfig = {
-    apiKey: "your-api-key-here",
-    authDomain: "your-project-id.firebaseapp.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project-id.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abcdef123456789"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_Uto15s4BKu8TvYogB6IJzqnx3rLl0IQ",
+    authDomain: "dreammaps-6800c.firebaseapp.com",
+    projectId: "dreammaps-6800c",
+    storageBucket: "dreammaps-6800c.firebasestorage.app",
+    messagingSenderId: "618647613231",
+    appId: "1:618647613231:web:abcd0e202ab962fa61bbda"
+  };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
