@@ -1,0 +1,467 @@
+/* ===== COURSE & VIDEO STYLES ===== */
+
+/* Skill Detail Modal Enhancements */
+.skill-detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+.skill-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 2px solid var(--border-light);
+}
+
+.skill-badge {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.skill-badge.newbie {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
+}
+
+.skill-badge.intermediate {
+    background: linear-gradient(135deg, #ed8936, #dd6b20);
+    color: white;
+}
+
+.skill-badge.advanced {
+    background: linear-gradient(135deg, #f56565, #e53e3e);
+    color: white;
+}
+
+.skill-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.skill-detail-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: var(--background-color);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.info-label {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-item span:last-child {
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Video Section */
+.skill-video-section {
+    background: var(--surface-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    border: 1px solid var(--border-color);
+}
+
+.skill-video-section h4 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin: 0 0 var(--spacing-lg) 0;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.skill-video-section h4::before {
+    content: '📹';
+    font-size: var(--font-size-xl);
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--background-color);
+    box-shadow: var(--shadow-lg);
+}
+
+.video-player {
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+    border: none;
+    border-radius: var(--radius-md);
+}
+
+.video-placeholder {
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border-radius: var(--radius-md);
+    text-align: center;
+    padding: var(--spacing-xl);
+}
+
+.video-placeholder-icon {
+    font-size: 4rem;
+    margin-bottom: var(--spacing-lg);
+    opacity: 0.8;
+}
+
+.video-placeholder h5 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+.video-placeholder p {
+    font-size: var(--font-size-sm);
+    opacity: 0.9;
+    margin: 0;
+}
+
+.video-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(100%);
+    transition: all var(--transition-normal);
+}
+
+.video-container:hover .video-controls {
+    transform: translateY(0);
+}
+
+.video-progress {
+    flex: 1;
+    margin: 0 var(--spacing-md);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 3px;
+    transition: width var(--transition-fast);
+}
+
+/* Course Content Section */
+.skill-content-section {
+    background: var(--surface-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    border: 1px solid var(--border-color);
+}
+
+.skill-content-section h4 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin: 0 0 var(--spacing-lg) 0;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.skill-content-section h4::before {
+    content: '📚';
+    font-size: var(--font-size-xl);
+}
+
+.course-content {
+    font-size: var(--font-size-base);
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.course-content h5 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin: var(--spacing-xl) 0 var(--spacing-md) 0;
+    color: var(--primary-color);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.course-content h6 {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    margin: var(--spacing-lg) 0 var(--spacing-sm) 0;
+    color: var(--text-primary);
+}
+
+.course-content p {
+    margin: 0 0 var(--spacing-md) 0;
+}
+
+.course-content ul,
+.course-content ol {
+    margin: 0 0 var(--spacing-md) var(--spacing-lg);
+    padding: 0;
+}
+
+.course-content li {
+    margin-bottom: var(--spacing-sm);
+}
+
+.course-content code {
+    background: var(--background-color);
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+    color: var(--primary-color);
+    border: 1px solid var(--border-light);
+}
+
+.course-content pre {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    overflow-x: auto;
+    margin: var(--spacing-md) 0;
+}
+
+.course-content pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text-primary);
+}
+
+.course-content blockquote {
+    border-left: 4px solid var(--primary-color);
+    padding: var(--spacing-md) var(--spacing-lg);
+    margin: var(--spacing-md) 0;
+    background: var(--primary-light);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    font-style: italic;
+}
+
+.course-content .highlight {
+    background: linear-gradient(120deg, transparent 0%, var(--accent-color) 20%, var(--accent-color) 80%, transparent 100%);
+    padding: 2px 4px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+}
+
+/* Learning Progress */
+.learning-progress {
+    background: var(--surface-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    border: 1px solid var(--border-color);
+    margin-top: var(--spacing-xl);
+}
+
+.learning-progress h4 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin: 0 0 var(--spacing-lg) 0;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.learning-progress h4::before {
+    content: '📊';
+    font-size: var(--font-size-xl);
+}
+
+.progress-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.progress-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--background-color);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+    transition: all var(--transition-normal);
+}
+
+.progress-item:hover {
+    border-color: var(--primary-color);
+    transform: translateX(4px);
+}
+
+.progress-item.completed {
+    background: var(--success-light);
+    border-color: var(--success-color);
+}
+
+.progress-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.progress-checkbox.checked {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+.progress-checkbox.checked::after {
+    content: '✓';
+    font-size: var(--font-size-sm);
+    font-weight: bold;
+}
+
+.progress-text {
+    flex: 1;
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+}
+
+.progress-item.completed .progress-text {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+/* Course Actions */
+.course-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    padding: var(--spacing-xl) 0 0 0;
+    border-top: 1px solid var(--border-light);
+    margin-top: var(--spacing-xl);
+}
+
+.btn.course-action {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn.course-action::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left var(--transition-normal);
+}
+
+.btn.course-action:hover::before {
+    left: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .skill-detail-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: flex-start;
+    }
+    
+    .skill-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .skill-detail-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .video-container {
+        min-height: 200px;
+    }
+    
+    .video-placeholder {
+        height: 200px;
+        padding: var(--spacing-lg);
+    }
+    
+    .video-placeholder-icon {
+        font-size: 3rem;
+    }
+    
+    .course-actions {
+        flex-direction: column;
+    }
+    
+    .btn.course-action {
+        width: 100%;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .video-controls {
+        background: rgba(0, 0, 0, 0.9);
+    }
+    
+    .progress-bar {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .course-content code {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--accent-color);
+    }
+    
+    .course-content pre {
+        background: rgba(255, 255, 255, 0.03);
+    }
+}

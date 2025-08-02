@@ -184,7 +184,10 @@ export async function addUserSkill(userId, skillData) {
             level: skillData.level,
             category: skillData.category || '',
             notes: skillData.notes || '',
-            resourceUrl: skillData.resourceUrl || '',
+            videoUrl: skillData.videoUrl || '',
+            courseContent: skillData.courseContent || '',
+            progress: 0,
+            completed: false,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp()
         });
@@ -310,7 +313,9 @@ export async function getUserActivities(userId, limitCount = 10) {
         return activities;
     } catch (error) {
         console.error('Error fetching user activities:', error);
-        throw handleFirebaseError(error);
+        // Return empty array instead of throwing
+        console.warn('Returning empty activities array due to error');
+        return [];
     }
 }
 
@@ -487,7 +492,10 @@ export async function addSelectedSkills(userId, selectedSkills) {
                 level: skill.level,
                 category: skill.category || '',
                 notes: '',
-                resourceUrl: '',
+                videoUrl: '',
+                courseContent: '',
+                progress: 0,
+                completed: false,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp()
             });
@@ -519,13 +527,19 @@ export async function getUserStats(userId) {
             console.log('📊 Calculating user stats for:', userId);
         }
         
-        const skills = await getUserSkills(userId);
+        let skills = [];
+        try {
+            skills = await getUserSkills(userId);
+        } catch (skillsError) {
+            console.warn('Error fetching user skills, using empty array:', skillsError);
+            skills = [];
+        }
         
         const stats = {
-            totalSkills: skills.length,
-            newbieSkills: skills.filter(s => s.level === 'newbie').length,
-            intermediateSkills: skills.filter(s => s.level === 'intermediate').length,
-            advancedSkills: skills.filter(s => s.level === 'advanced').length,
+            totalSkills: skills.length || 0,
+            newbieSkills: skills.filter(s => s.level === 'newbie').length || 0,
+            intermediateSkills: skills.filter(s => s.level === 'intermediate').length || 0,
+            advancedSkills: skills.filter(s => s.level === 'advanced').length || 0,
             categoryCounts: {}
         };
         
@@ -542,7 +556,14 @@ export async function getUserStats(userId) {
         return stats;
     } catch (error) {
         console.error('Error calculating user stats:', error);
-        throw handleFirebaseError(error);
+        // Return default stats instead of throwing
+        return {
+            totalSkills: 0,
+            newbieSkills: 0,
+            intermediateSkills: 0,
+            advancedSkills: 0,
+            categoryCounts: {}
+        };
     }
 }
 

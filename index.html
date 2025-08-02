@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="assets/css/auth.css">
     <link rel="stylesheet" href="assets/css/dashboard.css">
     <link rel="stylesheet" href="assets/css/onboarding.css">
+    <link rel="stylesheet" href="assets/css/profile.css">
+    <link rel="stylesheet" href="assets/css/course.css">
     
     <!-- Chart.js for dashboard charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -408,21 +410,27 @@
     <div id="profile-page" class="page hidden">
         <div class="profile-container">
             <div class="profile-header">
-                <div class="profile-avatar">
-                    <div class="avatar-placeholder" id="profile-avatar">👤</div>
-                    <button class="avatar-edit-btn" onclick="changeAvatar()">📷</button>
-                </div>
-                <div class="profile-info">
-                    <h1 id="profile-name">User Name</h1>
-                    <p id="profile-email">user@example.com</p>
-                    <div class="profile-stats">
-                        <div class="profile-stat">
-                            <span class="stat-value" id="profile-total-skills">0</span>
-                            <span class="stat-label">Skills</span>
-                        </div>
-                        <div class="profile-stat">
-                            <span class="stat-value" id="profile-join-date">Jan 2024</span>
-                            <span class="stat-label">Joined</span>
+                <div class="profile-header-content">
+                    <div class="profile-avatar">
+                        <div class="avatar-placeholder" id="profile-avatar">👤</div>
+                        <button class="avatar-edit-btn" onclick="changeAvatar()">📷</button>
+                    </div>
+                    <div class="profile-info">
+                        <h1 id="profile-name">User Name</h1>
+                        <p id="profile-email">user@example.com</p>
+                        <div class="profile-stats">
+                            <div class="profile-stat">
+                                <span class="stat-value" id="profile-total-skills">0</span>
+                                <span class="stat-label">Skills</span>
+                            </div>
+                            <div class="profile-stat">
+                                <span class="stat-value" id="profile-join-date">Jan 2024</span>
+                                <span class="stat-label">Joined</span>
+                            </div>
+                            <div class="profile-stat">
+                                <span class="stat-value" id="profile-level">Beginner</span>
+                                <span class="stat-label">Level</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -502,6 +510,33 @@
                         </div>
                     </div>
                 </div>
+                
+                <div class="profile-section">
+                    <h3>Achievements</h3>
+                    <div class="achievement-cards" id="achievement-cards">
+                        <div class="achievement-card">
+                            <div class="achievement-icon">🏆</div>
+                            <div class="achievement-info">
+                                <h4>First Skill</h4>
+                                <p>Added your first skill to track</p>
+                            </div>
+                        </div>
+                        <div class="achievement-card">
+                            <div class="achievement-icon">📚</div>
+                            <div class="achievement-info">
+                                <h4>Learning Enthusiast</h4>
+                                <p>Added 5 skills to your profile</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-section">
+                    <h3>Recent Activity</h3>
+                    <div class="activity-timeline" id="profile-activity-timeline">
+                        <!-- Activity items will be populated by JavaScript -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -547,9 +582,15 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="new-skill-video">Learning Resource URL (optional)</label>
-                    <input type="url" id="new-skill-video" placeholder="https://example.com/learning-resource">
-                    <small>Add a link to a tutorial, course, or learning resource</small>
+                    <label for="new-skill-video">Video URL (optional)</label>
+                    <input type="url" id="new-skill-video" placeholder="https://youtube.com/watch?v=... or video file URL">
+                    <small>Add a YouTube link, MP4 file URL, or other video resource</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-skill-content">Course Content (optional)</label>
+                    <textarea id="new-skill-content" placeholder="Write course description, learning objectives, key concepts, exercises, etc." rows="6"></textarea>
+                    <small>Add structured course content, learning materials, and instructions</small>
                 </div>
                 
                 <div class="form-group">
@@ -578,6 +619,7 @@
                 <div class="skill-detail-header">
                     <div class="skill-badge" id="skill-detail-level">Newbie</div>
                     <div class="skill-actions">
+                        <button onclick="startLearning()" class="btn btn-primary btn-small">Start Learning</button>
                         <button onclick="editSkill()" class="btn btn-secondary btn-small">Edit</button>
                         <button onclick="deleteSkill()" class="btn btn-danger btn-small">Delete</button>
                     </div>
@@ -592,14 +634,28 @@
                         <span class="info-label">Added:</span>
                         <span id="skill-detail-date">-</span>
                     </div>
-                    <div class="info-item" id="skill-resource-item" style="display: none;">
-                        <span class="info-label">Resource:</span>
-                        <a id="skill-detail-resource" href="#" target="_blank">View Resource</a>
+                    <div class="info-item">
+                        <span class="info-label">Progress:</span>
+                        <span id="skill-detail-progress">0%</span>
+                    </div>
+                </div>
+                
+                <div class="skill-video-section" id="skill-video-section" style="display: none;">
+                    <h4>Learning Video</h4>
+                    <div class="video-container" id="skill-video-container">
+                        <!-- Video player will be inserted here -->
+                    </div>
+                </div>
+                
+                <div class="skill-content-section" id="skill-content-section" style="display: none;">
+                    <h4>Course Content</h4>
+                    <div class="course-content" id="skill-detail-content">
+                        <!-- Course content will be inserted here -->
                     </div>
                 </div>
                 
                 <div class="skill-notes" id="skill-notes-section" style="display: none;">
-                    <h4>Notes</h4>
+                    <h4>Personal Notes</h4>
                     <p id="skill-detail-notes"></p>
                 </div>
                 
