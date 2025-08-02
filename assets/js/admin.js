@@ -172,8 +172,7 @@ async function loadCourses() {
         await createDefaultCourses();
         
         const coursesQuery = query(
-            collection(db, 'courses'),
-            orderBy('createdAt', 'desc')
+            collection(db, 'courses')
         );
         
         const querySnapshot = await getDocs(coursesQuery);
@@ -376,8 +375,8 @@ Learn about different HTML elements and their purposes...`,
             for (const course of defaultCourses) {
                 await addDoc(collection(db, 'courses'), {
                     ...course,
-                    createdAt: serverTimestamp(),
-                    updatedAt: serverTimestamp()
+                    createdAt: new Date(),
+                    updatedAt: new Date()
                 });
             }
             
@@ -622,8 +621,8 @@ export async function addNewCourse(event) {
     try {
         await addDoc(collection(db, 'courses'), {
             ...courseData,
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
+            createdAt: new Date(),
+            updatedAt: new Date()
         });
         
         showNotification('Course added successfully!', 'success');

@@ -32,8 +32,7 @@ export async function loadCoursesData() {
         // Load all available courses
         const coursesQuery = query(
             collection(db, 'courses'),
-            where('status', '==', 'published'),
-            orderBy('createdAt', 'desc')
+            where('status', '==', 'published')
         );
         
         const querySnapshot = await getDocs(coursesQuery);
@@ -59,7 +58,11 @@ export async function loadCoursesData() {
         
     } catch (error) {
         console.error('Error loading courses:', error);
-        showNotification('Error loading courses', 'error');
+        // Show empty state instead of error
+        allCourses = [];
+        filteredCourses = [];
+        displayCourses();
+        showNotification('Unable to load courses. Please check your connection.', 'warning');
     }
 }
 
@@ -303,7 +306,7 @@ export async function enrollInCourse(courseId) {
         await addDoc(collection(db, 'enrollments'), {
             userId: user.uid,
             courseId: courseId,
-            enrolledAt: serverTimestamp(),
+            enrolledAt: new Date(),
             progress: 0,
             completed: false
         });
